@@ -23,4 +23,4 @@ button.onclick = function(){
     // Make the reqyest 
     request.open('GET', 'http://tejapeddiboyina7.imad.hasura-app.io/counter', true);
     request.send(null);
-}
+};
