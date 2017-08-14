@@ -58,6 +58,15 @@ function createTemp(data){
     </html>`;
     return htmlTemp;
     }
+    
+    var counter = 0;
+    app.get('/counter',function(req, res){
+        counter++;
+        res.send(counter.toString());
+    });
+    
+    
+    
 
 app.get('/:articlename', function(req,res){
     var articlename = req.params.articlename;
