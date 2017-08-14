@@ -61,7 +61,7 @@ function createTemp(data){
 
 app.get('/:articlename', function(req,res){
     var articlename = req.params.articlename;
-    res.send(creatTemp(articles[articlename]));
+    res.send(createTemp(articles[articlename]));
 });
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'ui', 'index.html'));
