@@ -21,6 +21,8 @@ body {
 }
 
 .container {
-    color: grey;
+   color: grey;
     font-family: sans-serif;
+    padding-left: 21px;
+    max-width: 200px;
 }
