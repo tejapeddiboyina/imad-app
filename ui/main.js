@@ -29,4 +29,5 @@ button.onclick = function(){
     var span = document.getElementById('count');
     span.innerHTML = counter.toString();
 };*/
-console.log("i am teja")
+console.log("i am teja");
+alert('do something');
