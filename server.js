@@ -91,7 +91,7 @@ function createTemp(data){
 
 app.get('/articles/:articleName', function(req, res){
     pool.query('SELECT * FROM article WHERE title = $1', [req.params.articleName], function(err, result){
-            res.send('jjj');
+    
 
        if(err){
            res.status(500).send(err.toString());
