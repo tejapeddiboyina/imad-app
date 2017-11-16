@@ -12,26 +12,7 @@ var config ={
 var app = express(); 
 app.use(morgan('combined'));
 
-var articles = {
-    'article-one':{
-        title : 'article One | teja peddiboyina',
-        heading : 'article-One',
-        date : 'aug 14 , 2017',
-        content : '<p>teja\'s article one</p>',
-    },
-     'article-two':{
-        title : 'article two | teja peddiboyina',
-        heading : 'article-two',
-        date : 'aug 14 , 2016',
-        content : '<p>teja\'s article two</p>',
-    },
-     'article-three':{
-        title : 'article three | teja peddiboyina',
-        heading : 'article-three',
-        date : 'aug 14 , 2015',
-        content : '<p>teja\'s article three</p>',
-    }
-};
+
 
 function createTemp(data){
     var title = data.title;
