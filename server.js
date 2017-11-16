@@ -9,6 +9,7 @@ var config ={
   port: '5432',
   password: process.env.DB_PASSWORD
 };
+
 var app = express(); 
 app.use(morgan('combined'));
 
@@ -49,6 +50,17 @@ function createTemp(data){
     }
     
     
+function hash(input, salt){
+    var hashed = crypto.pbkdf2Sync(input, salt, 10000, 512, 'sha512');
+    return hashed.toString('hex');
+}    
+    
+    
+app.get('/hash/:input', function(req, res){
+  var hashedString = hash(req.params.input, 'this-is-a-message');
+  res.send(hashedString);
+});  
+    
     
 var pool = new Pool(config);
 app.get('/test-db', function(req, res){
@@ -64,6 +76,8 @@ app.get('/test-db', function(req, res){
        }
     });
 });
+
+
      
 var counter = 0;
 app.get('/counter',function(req, res){
@@ -72,11 +86,8 @@ app.get('/counter',function(req, res){
 });
     
     
-    
-
 app.get('/articles/:articleName', function(req, res){
     pool.query('SELECT * FROM article WHERE title = $1', [req.params.articleName], function(err, result){
-    
 
        if(err){
            res.status(500).send(err.toString());
@@ -86,7 +97,6 @@ app.get('/articles/:articleName', function(req, res){
            }else {
                var articleData = result.rows[0];
                    res.send(createTemp(articleData));
-
            }
        }
     });
