@@ -48,24 +48,28 @@ function createTemp(data){
     return htmlTemp;
     }
     
-    var pool = new Pool(config);
-    app.get('/test-db', function(req, res){
-       // make aselect request
-       // return a response with the results
-       pool.query('SELECT * FROM test', function(err, result){
-           if(err){
-               res.status(500).send(err.toString());
-           }else{
-               res.send(JSON.stringify(result.rows));
-           }
-       });
-    });
     
-    var counter = 0;
-    app.get('/counter',function(req, res){
-        counter++;
-        res.send(counter.toString());
+    
+var pool = new Pool(config);
+app.get('/test-db', function(req, res){
+   // make aselect request
+   // return a response with the results
+   pool.query('SELECT * FROM test', function(err, result){
+       
+       if(err){
+           
+           res.status(500).send(err.toString());
+        }else{
+           res.send(JSON.stringify(result.rows));
+       }
     });
+});
+     
+var counter = 0;
+app.get('/counter',function(req, res){
+    counter++;
+    res.send(counter.toString());
+});
     
     
     
@@ -88,6 +92,8 @@ app.get('/articles/:articleName', function(req, res){
     });
     
 });
+
+
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'ui', 'index.html'));
 });
