@@ -4,6 +4,7 @@ var path = require('path');
 var Pool = require('pg').Pool;
 var crypto = require('crypto')
 var bodyParser = require('body-parser');
+var session = require('express-session');
 
 var config ={
   user: 'tejapeddiboyina7',
@@ -16,6 +17,10 @@ var config ={
 var app = express(); 
 app.use(morgan('combined'));
 app.use(bodyParser.json());
+app.use(session({
+    secret: 'someRandomSecretValue',
+    cookie: { maxAge: 1000 * 60 * 60 * 24 * 30}
+}));
 
 
 function createTemp(data){
@@ -41,12 +46,19 @@ function createTemp(data){
                 <h3>${heading}</h3>
             </div>
             <div>
-                ${date}
+                ${date.toDateString()}
             </div>
              <div>
                 ${content}
             </div>
+            <hr/>
+            <div id="comment-form>
+            </div>
+            <div id="comments">
+                <center>Loading comments...</center>
+            </div>
         </div>
+        <script type="text/javascript" src="/ui/article.js"></script>
       </body>
     </html>`;
     return htmlTemp;
@@ -95,14 +107,37 @@ app.post('/login', function(req, res){
                 var salt = dbString.split('$')[2];
                 var hashedPassword = hash(password, salt);
                 if (hashedPassword === dbstring){
-                    res.send('credentials correct:')
+                    req.session.auth = {userId: result.rows[0].id};
+                    res.send('credentials correct!');
                 }else{
                     res.send(403).send('username/password is invalid');
                 }
             }
        }       
    });
-});    
+});
+
+
+app.get('/check-login', function (req, res) {
+   if (req.session && req.session.auth && req.session.auth.userId) {
+       // Load the user object
+       pool.query('SELECT * FROM "user" WHERE id = $1', [req.session.auth.userId], function (err, result) {
+           if (err) {
+              res.status(500).send(err.toString());
+           } else {
+              res.send(result.rows[0].username);    
+           }
+       });
+   } else {
+       res.status(400).send('You are not logged in');
+   }
+});
+
+
+app.get('/logout', function (req, res){
+   delete req.session.auth;
+   res.send('<html><body>Logged out!<br/><br/><a href="/">Back to home</a></body></html>');
+});
     
     
 var pool = new Pool(config);
@@ -119,12 +154,18 @@ app.get('/test-db', function(req, res){
 });
 
 
-     
-var counter = 0;
-app.get('/counter',function(req, res){
-    counter++;
-    res.send(counter.toString());
+app.get('/get-articles', function (req, res){
+   pool.query('SELECT * FROM article ORDER BY date DESC', function (err, result){
+     if (err){
+         res.status(500).send(err.toString());
+     } else {
+         res.send(JSON.stringify(result.rows));
+     }  
+   });
 });
+    
+    
+    
     
     
 app.get('/articles/:articleName', function(req, res){
@@ -149,13 +190,11 @@ app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'ui', 'index.html'));
 });
 
-app.get('/ui/style.css', function (req, res) {
-  res.sendFile(path.join(__dirname, 'ui', 'style.css'));
+app.get('/ui/:fileName', function (req, res) {
+  res.sendFile(path.join(__dirname, 'ui', req.params.fileName));
 });
 
-app.get('/ui/madi.png', function (req, res) {
-  res.sendFile(path.join(__dirname, 'ui', 'madi.png'));
-});
+
 
 
 // Do not change port, otherwise your app won't run on IMAD servers
