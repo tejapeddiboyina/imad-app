@@ -15,7 +15,7 @@ function loadLogin(){
     };
     
     request.open('GET', '/check-login', true);
-    request.send('login success');
+    //request.send(null);
 }
 
 
@@ -122,5 +122,5 @@ function loadArticles(){
     };
     
     request.open('GET', '/get-articles', true);
-    request.send(null);
+    //request.send(null);
 }
