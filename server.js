@@ -154,6 +154,43 @@ app.get('/test-db', function(req, res){
 });
 
 
+app.get('/get-comments/:articlename', function(res, req){
+   pool.query('SELECT comment.*, "user".username FROM article, comment, "user" WHERE comment.article_id = article.id AND comment.user_id = "user".id AND article.title = $1 ORDER BY comment.timestamp DESC', [req.params.articlename], function(err, result){
+      if(err){
+          res.status(500).send(err.toString());
+      } else {
+          res.send(JSON.stringify(result.rows));
+      }
+   });
+});
+
+
+app.post('/submit-comment/:articlename', function(req, res){
+   if(req.session && req.session.auth && req.session.auth.userId){
+       pool.query('SELECT * from article where title = $1', [req.params.articlename], function(err, result){
+          if(err){
+              res.status(500).send(err.toString());
+          } else {
+              if(result.rows.length === 0){
+                  res.status(400).send('article not found');
+              }else {
+                  var articleId = result.rows[0].id;
+                  pool.query('INSERT INTO comment (comment, article_id, user_id) VALUES ($1, $2, $3)', [req.body.comment, articleId, req.session.auth.userId], function(err, result){
+                     if(err){
+                         res.status(500).send(err.toString());
+                     } else {
+                         res.status(200).send('Comment inserted');
+                     }
+                  });
+              }
+          }
+       });
+   } else {
+       res.status(403).send('Only logged in users can comment');
+   }
+});
+
+
 app.get('/get-articles', function (req, res){
    pool.query('SELECT * FROM article ORDER BY date DESC', function (err, result){
      if (err){
