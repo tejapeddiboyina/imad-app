@@ -15,7 +15,7 @@ function loadLogin(){
     };
     
     request.open('GET', '/check-login', true);
-    request.send();
+    request.send('login success');
 }
 
 
@@ -29,12 +29,12 @@ function loadLoggedInUser(username){
 
 function loadLoginForm(){
     document.getElementById('login-area').innerHTML = `
-        <h3>Login/Register to unlock awesome features</>h3>
+        <h3>Login/Register to unlock awesome features</h3>
         <input type="text" id="username" placeholder="username" />
         <input type="password" id="password" />
         <br/><br/>
         <input type="submit" id="login-btn" value="login" />
-        <input type="submit" id=register-btn" value="register" />
+        <input type="submit" id="register-btn" value="register" />
         `;
         
     var submit = document.getElementById('login-btn');
