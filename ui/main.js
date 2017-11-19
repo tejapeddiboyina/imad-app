@@ -42,6 +42,7 @@ function loadLoginForm(){
       var request = new XMLHttpRequest();
       request.onreadystatechange = function(){
           if (request.readyState === XMLHttpRequest.DONE){
+              console.log('test');
               if (request.status === 200){
                   submit.value = 'Sucess!';
               }else if (request.status === 403){
